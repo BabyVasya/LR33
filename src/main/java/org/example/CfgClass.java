@@ -15,7 +15,7 @@ public class CfgClass {
     @XmlElement
     private List<String> neighborAgents;
     @XmlElement
-    private Map<String, Integer> distancesToNeighbors;
+    private List<Integer> distancesToNeighbors;
     @XmlElement
     private String targetAgentId;
 
@@ -26,20 +26,23 @@ public class CfgClass {
     public void setInitiator(boolean initiator) {
         this.initiator = initiator;
     }
+    public boolean getInitiator() {
+        return this.initiator;
+    }
 
-    public String getNeighborAgents() {
-        return neighborAgents.toString();
+    public List<String> getNeighborAgents() {
+        return neighborAgents;
     }
 
     public void setNeighborAgents(List<String> neighborAgents) {
         this.neighborAgents = neighborAgents;
     }
 
-    public Map<String, Integer> getDistancesToNeighbors() {
+    public List<Integer> getDistancesToNeighbors() {
         return distancesToNeighbors;
     }
 
-    public void setDistancesToNeighbors(Map<String, Integer> distancesToNeighbors) {
+    public void setDistancesToNeighbors(List<Integer> distancesToNeighbors) {
         this.distancesToNeighbors = distancesToNeighbors;
     }
 

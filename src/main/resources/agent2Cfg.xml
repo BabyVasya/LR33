@@ -2,23 +2,10 @@
 
 <cfg>
     <initiator>false</initiator>
-    <neighborAgents>
-        <neighbor>Agent3</neighbor>
-        <neighbor>Agent4</neighbor>
-    </neighborAgents>
-    <distancesToNeighbors>
-        <distanceToNeighbor>
-            <neighbor>Agent1</neighbor>
-            <distance>4</distance>
-        </distanceToNeighbor>
-        <distanceToNeighbor>
-            <neighbor>Agent3</neighbor>
-            <distance>20</distance>
-        </distanceToNeighbor>
-        <distanceToNeighbor>
-            <neighbor>Agent4</neighbor>
-            <distance>19</distance>
-        </distanceToNeighbor>
-    </distancesToNeighbors>
+    <neighborAgents>Agent1</neighborAgents>
+    <neighborAgents>Agent3</neighborAgents>
+    <neighborAgents>Agent4</neighborAgents>
+    <distancesToNeighbors>2</distancesToNeighbors>
+    <distancesToNeighbors>4</distancesToNeighbors>
+    <distancesToNeighbors>7</distancesToNeighbors>
 </cfg>
-

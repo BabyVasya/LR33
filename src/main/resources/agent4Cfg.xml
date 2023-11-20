@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <cfg>
-    <initiator>true</initiator>
+    <initiator>false</initiator>
     <neighborAgents>Agent2</neighborAgents>
     <neighborAgents>Agent5</neighborAgents>
-    <distancesToNeighbors>1</distancesToNeighbors>
+    <distancesToNeighbors>2</distancesToNeighbors>
     <distancesToNeighbors>2</distancesToNeighbors>
 </cfg>
