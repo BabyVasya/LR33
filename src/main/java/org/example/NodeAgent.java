@@ -26,37 +26,25 @@ public class NodeAgent extends Agent {
                     case "Agent1":
                         cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
                                 File("src/main/resources/agent1Cfg.xml"));
-                        log.info(String.valueOf(cfg.getInitiator()));
-                        log.info(String.valueOf(cfg.getDistancesToNeighbors()));
-                        log.info(String.valueOf(cfg.getNeighborAgents()));
+
                         break;
                     case "Agent2":
                         cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
                                 File("src/main/resources/agent2Cfg.xml"));
-                        log.info(String.valueOf(cfg.getInitiator()));
-                        log.info(String.valueOf(cfg.getDistancesToNeighbors()));
-                        log.info(String.valueOf(cfg.getNeighborAgents()));
+
                         break;
                     case "Agent3":
                         cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
                                 File("src/main/resources/agent3Cfg.xml"));
-                        log.info(String.valueOf(cfg.getInitiator()));
-                        log.info(String.valueOf(cfg.getDistancesToNeighbors()));
-                        log.info(String.valueOf(cfg.getNeighborAgents()));
+
                         break;
                     case "Agent4":
                         cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
                                 File("src/main/resources/agent4Cfg.xml"));
-                        log.info(String.valueOf(cfg.getInitiator()));
-                        log.info(String.valueOf(cfg.getDistancesToNeighbors()));
-                        log.info(String.valueOf(cfg.getNeighborAgents()));
                         break;
                     case "Agent5":
                         cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
                                 File("src/main/resources/agent5Cfg.xml"));
-                        log.info(String.valueOf(cfg.getInitiator()));
-                        log.info(String.valueOf(cfg.getDistancesToNeighbors()));
-                        log.info(String.valueOf(cfg.getNeighborAgents()));
                         break;
                 }
 
