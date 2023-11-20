@@ -32,10 +32,11 @@ public class RequestAnaylis extends Behaviour {
     public void action() {
         processMsg = getAgent().receive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
         if(processMsg != null ) {
-            log.info("новая интерация");
+            Data finding = new Data();
+            log.info("новая интерация с поиском " + finding.getCfgFind());
             nb = cfg.getNeighborAgents();
             nbD = cfg.getDistancesToNeighbors();
-            if(nb.contains(cfg.getTargetAgentId())) {
+            if(nb.contains(finding.getCfgFind())) {
                 endFlag = true;
                 log.info("Найдена нужная вершина");
                 return;
@@ -45,22 +46,21 @@ public class RequestAnaylis extends Behaviour {
             nb.remove(backIndex);
             nbD.remove(backIndex);
             if(nb.isEmpty() && nbD.isEmpty()) {
-               endFlag = true;
                log.info("Тупик");
                return;
             }
             log.info("After" + nb + " " + nbD);
-            min = IntStream.range(0, nbD.size())
-                    .reduce((i, j) -> nbD.get(i) < nbD.get(j) ? i : j).getAsInt();
-            log.info("Good way " + min );
             ACLMessage nextAgentTo = new ACLMessage(ACLMessage.INFORM);
-            nextAgentTo.addReceiver(new AID(nb.get(min), false));
-            nextAgentTo.setContent("Next turn to " +  nb.get(min) + " with way " + nbD.get(min));
-            log.info(nextAgentTo.toString());
-            wayListAgent.add(nb.get(min));
-            wayListWight.add(nbD.get(min));
+            for (int i = 0; i< nb.size()-1;i++ ) {
+                nextAgentTo.addReceiver(new AID(nb.get(i), false));
+                nextAgentTo.setContent("Next turn to " +  nb.get(i) + " with way " + nbD.get(i));
+                log.info(nextAgentTo.toString());
+            }
             getAgent().send(nextAgentTo);
         }
+    }
+    private void receiveMsg() {
+
     }
 
     @Override
