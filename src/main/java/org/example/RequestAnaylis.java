@@ -22,7 +22,7 @@ public class RequestAnaylis<E> extends Behaviour {
     private List<Integer> nbD;
     private int counter;
     private List<Object> way = new ArrayList<>();
-    private int msgSize;
+
 
     public RequestAnaylis(CfgClass cfg) {
         this.cfg = cfg;
@@ -33,7 +33,6 @@ public class RequestAnaylis<E> extends Behaviour {
     public void action() {
         receivedMsg = getAgent().receive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
         if (receivedMsg != null) {
-            msgSize =0;
             analyse(nb, nbD);
         }
     }
@@ -41,13 +40,14 @@ public class RequestAnaylis<E> extends Behaviour {
     private void analyse(List<String> nb, List<Integer> nbD) {
         nb = cfg.getNeighborAgents();
         nbD = cfg.getDistancesToNeighbors();
+        log.info("Массив nb " + nb + " цепочка от " + receivedMsg.getSender().getLocalName());
+        log.info("Массив nbD " + nbD+ " цепочка от " + receivedMsg.getSender().getLocalName());
         Gson gson = new Gson();
         WayDto wayDto = gson.fromJson(receivedMsg.getContent(), WayDto.class);
         nb.remove(wayDto.getInitiator());
         log.info("Новая интерация с поиском " + wayDto.getFindingAgent() + " информация на текущей интерации " + gson.toJson(wayDto) + " цепочка идет от " + receivedMsg.getSender().getLocalName());
-        if(myAgent.getLocalName().equals("Agent7")) {
-            log.info("массив nb " + nb);
-            log.info("массив nbD " + nbD);
+        if(myAgent.getLocalName().equals("Agent10")) {
+            log.info("Я тут");
         }
 
         if (nb.contains(receivedMsg.getSender().getLocalName()) && nb.size() == 1) {
@@ -67,7 +67,7 @@ public class RequestAnaylis<E> extends Behaviour {
         ACLMessage nextAgentTo = new ACLMessage(ACLMessage.INFORM);
         wayDto.getAllAgentsByWay().add(myAgent.getLocalName());
         for (int i = 0; i <= nb.size() - 1; i++) {
-            if (!nb.get(i).equals(receivedMsg.getSender().getLocalName())) {
+            if (!nb.get(i).equals(receivedMsg.getSender().getLocalName()) && !wayDto.getAllAgentsByWay().contains(nb.get(i))) {
                 log.info("Добавляю получателя " + nb.get(i));
                 nextAgentTo.addReceiver(new AID(nb.get(i), false));
             }
