@@ -53,8 +53,8 @@ public class RequestAnaylis<E> extends Behaviour {
         if (nb.contains(receivedMsg.getSender().getLocalName()) && nb.size() == 1) {
             log.info("Тупик");
             endFlag = true;
-
         }
+
         if (myAgent.getLocalName().equals(wayDto.getFindingAgent())) {
             wayDto.getAllAgentsByWay().add(myAgent.getLocalName());
             log.info("Найдена нужная вершина" + gson.toJson(wayDto));
