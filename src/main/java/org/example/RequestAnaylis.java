@@ -46,36 +46,56 @@ public class RequestAnaylis<E> extends Behaviour {
         WayDto wayDto = gson.fromJson(receivedMsg.getContent(), WayDto.class);
         nb.remove(wayDto.getInitiator());
         log.info("Новая интерация с поиском " + wayDto.getFindingAgent() + " информация на текущей интерации " + gson.toJson(wayDto) + " цепочка идет от " + receivedMsg.getSender().getLocalName());
-        if(myAgent.getLocalName().equals("Agent10")) {
-            log.info("Я тут");
-        }
 
-        if (nb.contains(receivedMsg.getSender().getLocalName()) && nb.size() == 1) {
-            log.info("Тупик");
-            endFlag = true;
-        }
 
         if (myAgent.getLocalName().equals(wayDto.getFindingAgent())) {
             wayDto.getAllAgentsByWay().add(myAgent.getLocalName());
             log.info("Найдена нужная вершина" + gson.toJson(wayDto));
             counter++;
-            if(counter ==4) {
+            ACLMessage backMsg = new ACLMessage(ACLMessage.CONFIRM);
+            backMsg.addReceiver(new AID(wayDto.getAllAgentsByWay().get(wayDto.getAllAgentsByWay().size()-1), false));
+            backMsg.setContent(String.valueOf(wayDto.getAllAgentsByWay()));
+            log.info("Отсылка результата " + backMsg);
+            getAgent().send(backMsg);
+            if(counter == 10) {
                 endFlag = true;
             }
 
         }
+
+        if (nb.contains(receivedMsg.getSender().getLocalName()) && nb.size() == 1) {
+            log.info("Тупик");
+        }
+
         ACLMessage nextAgentTo = new ACLMessage(ACLMessage.INFORM);
         wayDto.getAllAgentsByWay().add(myAgent.getLocalName());
-        for (int i = 0; i <= nb.size() - 1; i++) {
-            if (!nb.get(i).equals(receivedMsg.getSender().getLocalName()) && !wayDto.getAllAgentsByWay().contains(nb.get(i))) {
-                log.info("Добавляю получателя " + nb.get(i));
-                nextAgentTo.addReceiver(new AID(nb.get(i), false));
+        List<String> tmpNb = nb.stream().collect(Collectors.toList());
+
+        log.info("tmpNb перед циклами " + tmpNb);
+        tmpNb.removeAll(wayDto.getInitiatorCfg().getNeighborAgents());
+        for (int j=0; j<=tmpNb.size()-1; j++) {
+            if(tmpNb.get(j).equals(receivedMsg.getSender().getLocalName())) {
+                log.info("Удаляю моего отправителя " + receivedMsg.getSender().getLocalName() + " " + !tmpNb.get(j).equals(receivedMsg.getSender().getLocalName()) + " " + tmpNb);
+                tmpNb.remove(j);
             }
+        }
+
+        for (int j=0; j<=tmpNb.size()-1; j++) {
+            if(wayDto.getAllAgentsByWay().contains(tmpNb.get(j))) {
+                log.info("Удаляю повторения " + wayDto.getAllAgentsByWay() + " " + !wayDto.getAllAgentsByWay().contains(tmpNb.get(j)) + " " + tmpNb);
+                tmpNb.remove(j);
+            }
+        }
+        log.info("tmpNb после циклов" + tmpNb);
+
+        for (int i = 0; i <= tmpNb.size() - 1; i++) {
+            log.info("Добавляю получателя " + tmpNb.get(i));
+            nextAgentTo.addReceiver(new AID(tmpNb.get(i), false));
             double incrementWay = wayDto.getWieght() + nbD.get(i);
             wayDto.setWieght(incrementWay);
             nextAgentTo.setContent(gson.toJson(wayDto));
             getAgent().send(nextAgentTo);
-            log.info(myAgent.getLocalName() + " отослал информацию к " + nb.get(i) + gson.toJson(wayDto));
+            log.info(myAgent.getLocalName() + " отослал информацию к " + tmpNb.get(i) + gson.toJson(wayDto) );
             nextAgentTo.clearAllReceiver();
         }
 

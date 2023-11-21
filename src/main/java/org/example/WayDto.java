@@ -8,11 +8,25 @@ public class WayDto {
     private double wieght;
     private String findingAgent;
     List<String> allAgentsByWay = new ArrayList<>();
+    private CfgClass initiatorCfg;
+    private CfgClass anyCfg;
 
-    public WayDto(double wieght, String findingAgent, List<String> allAgentsByWay) {
-        this.wieght = wieght;
-        this.findingAgent = findingAgent;
-        this.allAgentsByWay = allAgentsByWay;
+//    public WayDto(double wieght, String findingAgent, List<String> allAgentsByWay) {
+//        this.wieght = wieght;
+//        this.findingAgent = findingAgent;
+//        this.allAgentsByWay = allAgentsByWay;
+//    }
+
+    public void setAnyCfg(CfgClass anyCfg) {
+        this.anyCfg = anyCfg;
+    }
+
+    public CfgClass getInitiatorCfg() {
+        return initiatorCfg;
+    }
+
+    public void setInitiatorCfg(CfgClass initiatorCfg) {
+        this.initiatorCfg = initiatorCfg;
     }
 
     public double getWieght() {

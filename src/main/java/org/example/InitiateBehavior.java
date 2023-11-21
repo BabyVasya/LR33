@@ -34,8 +34,12 @@ public class InitiateBehavior extends FSMBehaviour {
                 ACLMessage startMsg = new ACLMessage(ACLMessage.INFORM);
                 for (int i =0; i <= cfg.getNeighborAgents().size()-1; i++) {
                     startMsg.addReceiver(new AID(cfg.getNeighborAgents().get(i), false));
-                    WayDto wayDto = new WayDto(cfg.getDistancesToNeighbors().get(i), cfg.getTargetAgentId(), Arrays.asList(myAgent.getLocalName()));
+                    WayDto wayDto = new WayDto();
+                    wayDto.setAllAgentsByWay(Arrays.asList(myAgent.getLocalName()));
+                    wayDto.setWieght(cfg.getDistancesToNeighbors().get(i));
+                    wayDto.setFindingAgent(cfg.getTargetAgentId());
                     wayDto.setInitiator(myAgent.getLocalName());
+                    wayDto.setInitiatorCfg(cfg);
                     Gson gson = new Gson();
                     startMsg.setContent(gson.toJson(wayDto));
                     log.info(startMsg.toString());

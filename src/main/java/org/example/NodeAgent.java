@@ -54,9 +54,21 @@ public class NodeAgent extends Agent {
                         cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
                                 File("src/main/resources/agent7Cfg.xml"));
                         break;
+                    case "Agent8":
+                        cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
+                                File("src/main/resources/agent8Cfg.xml"));
+                        break;
+                    case "Agent9":
+                        cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
+                                File("src/main/resources/agent9Cfg.xml"));
+                        break;
                     case "Agent10":
                         cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
                                 File("src/main/resources/agent10Cfg.xml"));
+                        break;
+                    case "Agent11":
+                        cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
+                                File("src/main/resources/agent11Cfg.xml"));
                         break;
                 }
 
@@ -67,6 +79,7 @@ public class NodeAgent extends Agent {
         }
         addBehaviour(new InitiateBehavior(cfg));
         addBehaviour(new RequestAnaylis(cfg));
+        addBehaviour(new BackToInitiatorBeh(cfg));
     }
 }
 
