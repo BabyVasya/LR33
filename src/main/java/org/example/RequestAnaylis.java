@@ -62,21 +62,18 @@ public class RequestAnaylis<E> extends Behaviour {
         }
         log.info("After" + nb + " " + nbD);
         ACLMessage nextAgentTo = new ACLMessage(ACLMessage.INFORM);
-        for (int j = 0; j <= msgSize - 1; j++) {
-            way.add(myAgent.getLocalName());
-            way.add(nb.get(j));
-            way.add(nbD.get(j));
-        }
         for (int i = 0; i <= nb.size() - 1; i++) {
             log.info(nb.size() + " size ");
             log.info("i = " + i);
             nextAgentTo.addReceiver(new AID(nb.get(i), false));
+            way.add(myAgent.getLocalName());
+            way.add(nb.get(i));
+            way.add(nbD.get(i));
             nextAgentTo.setContent(String.valueOf(way));
             msgSize++;
-            if (msgSize == nb.size()) {
-                getAgent().send(nextAgentTo);
-                log.info(nextAgentTo.toString());
-            }
+            getAgent().send(nextAgentTo);
+            log.info(nextAgentTo.toString());
+            nextAgentTo.clearAllReceiver();
         }
 
 
@@ -85,7 +82,6 @@ public class RequestAnaylis<E> extends Behaviour {
     private void wayParsing(String message) {
         if (counter > 0) {
             counter++;
-            way.clear();
             String content = message.substring(1, message.length() - 1).trim();
             String[] elements = content.split(", ");
             for (String element : elements) {
