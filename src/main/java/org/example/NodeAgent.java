@@ -46,6 +46,18 @@ public class NodeAgent extends Agent {
                         cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
                                 File("src/main/resources/agent5Cfg.xml"));
                         break;
+                    case "Agent6":
+                        cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
+                                File("src/main/resources/agent6Cfg.xml"));
+                        break;
+                    case "Agent7":
+                        cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
+                                File("src/main/resources/agent7Cfg.xml"));
+                        break;
+                    case "Agent10":
+                        cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
+                                File("src/main/resources/agent10Cfg.xml"));
+                        break;
                 }
 
 

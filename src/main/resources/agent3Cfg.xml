@@ -3,5 +3,5 @@
 <cfg>
     <initiator>false</initiator>
     <neighborAgents>Agent2</neighborAgents>
-    <distancesToNeighbors>2</distancesToNeighbors>
+    <distancesToNeighbors>20</distancesToNeighbors>
 </cfg>

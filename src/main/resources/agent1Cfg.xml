@@ -4,6 +4,6 @@
     <initiator>true</initiator>
     <neighborAgents>Agent2</neighborAgents>
     <neighborAgents>Agent5</neighborAgents>
-    <distancesToNeighbors>1</distancesToNeighbors>
-    <distancesToNeighbors>2</distancesToNeighbors>
+    <distancesToNeighbors>4</distancesToNeighbors>
+    <distancesToNeighbors>15</distancesToNeighbors>
 </cfg>

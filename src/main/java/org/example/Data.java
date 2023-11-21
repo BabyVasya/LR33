@@ -20,7 +20,7 @@ public class Data {
                         JAXBContext.newInstance(CfgClass.class);
                 Unmarshaller jaxbUnmarshaller = context.createUnmarshaller();
                         cfgFind = (CfgClass) jaxbUnmarshaller.unmarshal(new
-                                File("src/main/resources/agent4Cfg.xml"));
+                                File("src/main/resources/agent7Cfg.xml"));
 
             } catch (JAXBException e) {
                 e.printStackTrace();
