@@ -6,5 +6,4 @@
     <neighborAgents>Agent10</neighborAgents>
     <distancesToNeighbors>19</distancesToNeighbors>
     <distancesToNeighbors>20</distancesToNeighbors>
-    <targetAgentId>Agent6</targetAgentId>
 </cfg>

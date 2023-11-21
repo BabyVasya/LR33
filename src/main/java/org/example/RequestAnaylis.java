@@ -1,5 +1,6 @@
 package org.example;
 
+import com.google.gson.Gson;
 import jade.core.AID;
 import jade.core.behaviours.ActionExecutor;
 import jade.core.behaviours.Behaviour;
@@ -8,6 +9,7 @@ import jade.lang.acl.MessageTemplate;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 @Slf4j
@@ -32,68 +34,54 @@ public class RequestAnaylis<E> extends Behaviour {
         receivedMsg = getAgent().receive(MessageTemplate.MatchPerformative(ACLMessage.INFORM));
         if (receivedMsg != null) {
             msgSize =0;
-            wayParsing(receivedMsg.getContent());
             analyse(nb, nbD);
         }
     }
 
     private void analyse(List<String> nb, List<Integer> nbD) {
-        counter++;
-        Data finding = new Data();
-        log.info("Новая интерация с поиском " + finding.getCfgFind());
         nb = cfg.getNeighborAgents();
         nbD = cfg.getDistancesToNeighbors();
-        if (nb.isEmpty() && nbD.isEmpty()) {
-            log.info("Тупик");
-            return;
+        Gson gson = new Gson();
+        WayDto wayDto = gson.fromJson(receivedMsg.getContent(), WayDto.class);
+        nb.remove(wayDto.getInitiator());
+        log.info("Новая интерация с поиском " + wayDto.getFindingAgent() + " информация на текущей интерации " + gson.toJson(wayDto) + " цепочка идет от " + receivedMsg.getSender().getLocalName());
+        if(myAgent.getLocalName().equals("Agent7")) {
+            log.info("массив nb " + nb);
+            log.info("массив nbD " + nbD);
         }
-        if (nb.contains(finding.getCfgFind())) {
+
+        if (nb.contains(receivedMsg.getSender().getLocalName()) && nb.size() == 1) {
+            log.info("Тупик");
             endFlag = true;
-            log.info("Найдена нужная вершина");
+
         }
-        log.info("before " + nb + " " + nbD);
-        log.info("Agent sender delete " + receivedMsg.getSender().getLocalName());
-        int indexOfPrev = nb.indexOf(receivedMsg.getSender().getLocalName());
-        nb.remove(indexOfPrev);
-        nbD.remove(indexOfPrev);
-        if (nb.isEmpty() && nbD.isEmpty()) {
-            log.info("Тупик");
-            return;
+        if (myAgent.getLocalName().equals(wayDto.getFindingAgent())) {
+            wayDto.getAllAgentsByWay().add(myAgent.getLocalName());
+            log.info("Найдена нужная вершина" + gson.toJson(wayDto));
+            counter++;
+            if(counter ==4) {
+                endFlag = true;
+            }
+
         }
-        log.info("After" + nb + " " + nbD);
         ACLMessage nextAgentTo = new ACLMessage(ACLMessage.INFORM);
+        wayDto.getAllAgentsByWay().add(myAgent.getLocalName());
         for (int i = 0; i <= nb.size() - 1; i++) {
-            log.info(nb.size() + " size ");
-            log.info("i = " + i);
-            nextAgentTo.addReceiver(new AID(nb.get(i), false));
-            way.add(myAgent.getLocalName());
-            way.add(nb.get(i));
-            way.add(nbD.get(i));
-            nextAgentTo.setContent(String.valueOf(way));
-            msgSize++;
+            if (!nb.get(i).equals(receivedMsg.getSender().getLocalName())) {
+                log.info("Добавляю получателя " + nb.get(i));
+                nextAgentTo.addReceiver(new AID(nb.get(i), false));
+            }
+            double incrementWay = wayDto.getWieght() + nbD.get(i);
+            wayDto.setWieght(incrementWay);
+            nextAgentTo.setContent(gson.toJson(wayDto));
             getAgent().send(nextAgentTo);
-            log.info(nextAgentTo.toString());
+            log.info(myAgent.getLocalName() + " отослал информацию к " + nb.get(i) + gson.toJson(wayDto));
             nextAgentTo.clearAllReceiver();
         }
 
 
     }
 
-    private void wayParsing(String message) {
-        if (counter > 0) {
-            counter++;
-            String content = message.substring(1, message.length() - 1).trim();
-            String[] elements = content.split(", ");
-            for (String element : elements) {
-                if (element.startsWith("Agent")) {
-                    way.add(element);
-                } else {
-                    way.add(Integer.parseInt(element));
-                }
-            }
-            log.info("Result of parsing way  " + way);
-        }
-    }
         @Override
         public boolean done () {
             return endFlag;
