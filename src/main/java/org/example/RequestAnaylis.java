@@ -18,8 +18,8 @@ public class RequestAnaylis<E> extends Behaviour {
     private String endAgent;
     private boolean endFlag;
     private CfgClass cfg;
-    private List<String> nb;
-    private List<Integer> nbD;
+    private List<String> nb = new ArrayList<>();
+    private List<Integer> nbD = new ArrayList<>();
     private int counter;
     private List<Object> way = new ArrayList<>();
 
@@ -38,64 +38,42 @@ public class RequestAnaylis<E> extends Behaviour {
     }
 
     private void analyse(List<String> nb, List<Integer> nbD) {
-        nb = cfg.getNeighborAgents();
+//        Инициализация конфига, gson, и парсинг пришедшего JSON
         nbD = cfg.getDistancesToNeighbors();
-        log.info("Массив nb " + nb + " цепочка от " + receivedMsg.getSender().getLocalName());
-        log.info("Массив nbD " + nbD+ " цепочка от " + receivedMsg.getSender().getLocalName());
+        nb = cfg.getNeighborAgents();
         Gson gson = new Gson();
         WayDto wayDto = gson.fromJson(receivedMsg.getContent(), WayDto.class);
-        nb.remove(wayDto.getInitiator());
-        log.info("Новая интерация с поиском " + wayDto.getFindingAgent() + " информация на текущей интерации " + gson.toJson(wayDto) + " цепочка идет от " + receivedMsg.getSender().getLocalName());
-
-
-        if (myAgent.getLocalName().equals(wayDto.getFindingAgent())) {
-            wayDto.getAllAgentsByWay().add(myAgent.getLocalName());
-            log.info("Найдена нужная вершина" + gson.toJson(wayDto));
-            ACLMessage backMsg = new ACLMessage(ACLMessage.CONFIRM);
-            backMsg.addReceiver(new AID(wayDto.getAllAgentsByWay().get(wayDto.getAllAgentsByWay().size()-1), false));
-            backMsg.setContent(gson.toJson(wayDto));
-            log.info("Отсылка результата " + backMsg);
-            getAgent().send(backMsg);
-
+        log.info("Before remove nb" + nb + nb.size() + " Before remove nbD" + nbD + nbD.size());
+        List<String> finalNb = nb;
+        int indexToRemove = 0;
+        for (int i = 0; i <= nb.size()-1; i++) {
+            if (nb.get(i).equals(wayDto.getInitiator())) {
+                indexToRemove = i;
+                log.info("indexToRemove  " + indexToRemove);
+                break;
+            }
         }
-
+        nb.remove(indexToRemove);
+        if (indexToRemove != - 1) {
+            nbD.remove(indexToRemove);
+        } else {
+            log.info("элемент не наайден в списке");
+        }
+        log.info("After remove nb" + nb + nb.size() + " After remove nbD" + nbD + nbD.size());
+        log.info("Новая интерация с поиском " + wayDto.getFindingAgent() + " информация на текущей интерации " + gson.toJson(wayDto) + " цепочка идет от " + receivedMsg.getSender().getLocalName());
+//        Проверка на найденного агента
+        if (myAgent.getLocalName().equals(wayDto.getFindingAgent())) {
+            foundAgent(wayDto, gson);
+        }
+//        Проверка на тупик
         if (nb.contains(receivedMsg.getSender().getLocalName()) && nb.size() == 1) {
             tupik(wayDto, gson);
         }
+//        Удаление ненужных агентов для исключения зацикливания
+        List<String> onlyGoodWays = exclusionOfUnnecessary(wayDto, nb, nbD);
 
-        ACLMessage nextAgentTo = new ACLMessage(ACLMessage.INFORM);
-        wayDto.getAllAgentsByWay().add(myAgent.getLocalName());
-        List<String> tmpNb = nb.stream().collect(Collectors.toList());
-
-        log.info("tmpNb перед циклами " + tmpNb);
-        tmpNb.removeAll(wayDto.getInitiatorCfg().getNeighborAgents());
-        for (int j=0; j<=tmpNb.size()-1; j++) {
-            if(tmpNb.get(j).equals(receivedMsg.getSender().getLocalName())) {
-                log.info("Удаляю моего отправителя " + receivedMsg.getSender().getLocalName() + " " + !tmpNb.get(j).equals(receivedMsg.getSender().getLocalName()) + " " + tmpNb);
-                tmpNb.remove(j);
-            }
-        }
-
-        for (int j=0; j<=tmpNb.size()-1; j++) {
-            if(wayDto.getAllAgentsByWay().contains(tmpNb.get(j))) {
-                log.info("Удаляю повторения " + wayDto.getAllAgentsByWay() + " " + !wayDto.getAllAgentsByWay().contains(tmpNb.get(j)) + " " + tmpNb);
-                tmpNb.remove(j);
-            }
-        }
-        log.info("tmpNb после циклов" + tmpNb);
-
-        for (int i = 0; i <= tmpNb.size() - 1; i++) {
-            log.info("Добавляю получателя " + tmpNb.get(i));
-            nextAgentTo.addReceiver(new AID(tmpNb.get(i), false));
-            double incrementWay = wayDto.getWieght() + nbD.get(i);
-            wayDto.setWieght(incrementWay);
-            nextAgentTo.setContent(gson.toJson(wayDto));
-            getAgent().send(nextAgentTo);
-            log.info(myAgent.getLocalName() + " отослал информацию к " + tmpNb.get(i) + gson.toJson(wayDto) );
-            nextAgentTo.clearAllReceiver();
-        }
-
-
+//        Отправка для дальнейшего поиска нужного агента
+        sendNext(onlyGoodWays, wayDto, gson, nbD);
     }
 
         @Override
@@ -112,8 +90,68 @@ public class RequestAnaylis<E> extends Behaviour {
             log.info("Отсылка результата  с тупиком " + backMsg);
             getAgent().send(backMsg);
         }
-        private void foundAgent() {
-
+        private void foundAgent(WayDto wayDto, Gson gson) {
+            wayDto.getAllAgentsByWay().add(myAgent.getLocalName());
+            log.info("Найдена нужная вершина" + gson.toJson(wayDto));
+            ACLMessage backMsg = new ACLMessage(ACLMessage.CONFIRM);
+            backMsg.addReceiver(new AID(wayDto.getAllAgentsByWay().get(wayDto.getAllAgentsByWay().size()-1), false));
+            backMsg.setContent(gson.toJson(wayDto));
+            log.info("Отсылка результата с найденой вершиной" + backMsg);
+            getAgent().send(backMsg);
+            block();
         }
+
+        private List<String> exclusionOfUnnecessary(WayDto wayDto, List<String> nb, List<Integer> nbD) {
+
+        wayDto.getAllAgentsByWay().add(myAgent.getLocalName());
+        List<String> tmpNb = new ArrayList<>(nb);
+        List<Integer> tmpNbD = new ArrayList<>(nbD);
+        log.info("Size of tmpNb " + tmpNb + tmpNb.size());
+        log.info("Size of tmpNbD " + tmpNbD+ tmpNbD.size());
+        List<Integer> indicesToRemoveInNbD = IntStream.range(0, tmpNb.size())
+                .filter(i -> tmpNb.contains(tmpNb.get(i)))
+                .boxed()
+                .collect(Collectors.toList());
+
+        List<Integer> tmpNbD1 = IntStream.range(0, tmpNbD.size())
+                .filter(i -> !indicesToRemoveInNbD.contains(i))
+                .mapToObj(tmpNbD::get)
+                .collect(Collectors.toList());
+
+        tmpNb.removeAll(wayDto.getInitiatorCfg().getNeighborAgents());
+        log.info("Efore cycle delete " + tmpNb + tmpNbD1);
+
+        if(tmpNbD1.size()>0 && tmpNb.size()>0) {
+            for (int j=0; j<=tmpNb.size()-1; j++) {
+                if(tmpNb.get(j).equals(receivedMsg.getSender().getLocalName())) {
+                    tmpNb.remove(j);
+                    tmpNbD1.remove(j);
+                    log.info("Fter delete " + tmpNb + tmpNbD1);
+                }
+            }
+
+            for (int j=0; j<=tmpNb.size()-1; j++) {
+                if(wayDto.getAllAgentsByWay().contains(tmpNb.get(j))) {
+                    tmpNb.remove(j);
+                    tmpNbD1.remove(j);
+                    log.info("Fter delete " + tmpNb + tmpNbD1);
+                }
+            }
+        }
+            return  tmpNb;
+    }
+
+    private void sendNext(List<String> onlyGoodWays, WayDto wayDto, Gson gson, List<Integer> nbD) {
+        ACLMessage nextAgentTo = new ACLMessage(ACLMessage.INFORM);
+        for (int i = 0; i <= onlyGoodWays .size() - 1; i++) {
+            nextAgentTo.addReceiver(new AID(onlyGoodWays .get(i), false));
+            double incrementWay = wayDto.getWieght() + nbD.get(i);
+            wayDto.setWieght(incrementWay);
+            nextAgentTo.setContent(gson.toJson(wayDto));
+            getAgent().send(nextAgentTo);
+            log.info(myAgent.getLocalName() + " отослал информацию к " + onlyGoodWays .get(i) + gson.toJson(wayDto) );
+            nextAgentTo.clearAllReceiver();
+        }
+    }
 }
 

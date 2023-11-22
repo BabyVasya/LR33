@@ -44,18 +44,15 @@ public class BackToInitiatorBeh extends Behaviour {
             backWayDto.getBackWay().remove(backWayDto.getBackWay().size()-1);
             backWayDto.getBackWay().remove(backWayDto.getBackWay().size()-1);
             backway1.setContent(gson.toJson(backWayDto));
-            log.info("Послали "+ backway1 );
             getAgent().send(backway1);
         }
         if (backMsg1!=null) {
-            log.info("Проходим дальше " + backMsg1.getContent());
             Gson gson = new Gson();
             BackWayDto backWayDto = gson.fromJson(backMsg1.getContent(), BackWayDto.class);
             backWayDto.getBackWay().remove(backWayDto.getBackWay().size()-1);
             ACLMessage backway1 = new ACLMessage(ACLMessage.PROPOSE);
             backway1.addReceiver(new AID(backWayDto.getBackWay().get(backWayDto.getBackWay().size()-1), false));
             backway1.setContent(gson.toJson(backWayDto));
-            log.info("На следующую итерацию "+ backway1 );
             if (backWayDto.getBackWay().size() > 1) {
                 getAgent().send(backway1);
             } else {
