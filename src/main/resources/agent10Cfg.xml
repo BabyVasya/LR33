@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <cfg>
-    <initiator>false</initiator>
+    <initiator>true</initiator>
     <neighborAgents>Agent6</neighborAgents>
     <neighborAgents>Agent7</neighborAgents>
     <neighborAgents>Agent11</neighborAgents>
     <distancesToNeighbors>1</distancesToNeighbors>
     <distancesToNeighbors>20</distancesToNeighbors>
     <distancesToNeighbors>19</distancesToNeighbors>
+    <targetAgentId>Agent5</targetAgentId>
 </cfg>

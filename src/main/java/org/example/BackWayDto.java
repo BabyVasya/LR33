@@ -5,6 +5,25 @@ import java.util.List;
 import java.util.Map;
 
 public class BackWayDto {
+    private  String initiator;
+    private boolean tupik = false;
+
+    public boolean isTupik() {
+        return tupik;
+    }
+
+    public void setTupik(boolean tupik) {
+        this.tupik = tupik;
+    }
+
+    public String getInitiator() {
+        return initiator;
+    }
+
+    public void setInitiator(String initiator) {
+        this.initiator = initiator;
+    }
+
     private double weightOfWay;
     private String wayScircit;
     private List<String> backWay = new ArrayList<>();
@@ -12,6 +31,14 @@ public class BackWayDto {
 
     public int getIndexnext() {
         return indexnext;
+    }
+
+    public double getWeightOfWay() {
+        return weightOfWay;
+    }
+
+    public void setWeightOfWay(double weightOfWay) {
+        this.weightOfWay = weightOfWay;
     }
 
     public void setIndexnext(int indexnext) {

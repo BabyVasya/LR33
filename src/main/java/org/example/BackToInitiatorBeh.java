@@ -31,37 +31,40 @@ public class BackToInitiatorBeh extends Behaviour {
         ACLMessage backMsg = getAgent().receive(MessageTemplate.MatchPerformative(ACLMessage.CONFIRM));
         if (backMsg!=null ) {
             log.info("Получил запрос на обратный путь " + backMsg.getContent());
-//            BackWayDto backWayDto = new BackWayDto();
-//            List<String> tmp = new ArrayList<>(Arrays.stream(backMsg.getContent().substring(1, backMsg.getContent().length() - 1).split(", "))
-//                    .collect(Collectors.toList()));
-//            List<String> tmp2 = Arrays.stream(backMsg.getContent().substring(1, backMsg.getContent().length() - 1).split(", "))
-//                    .collect(Collectors.toList());
-//            backWayDto.setWayScircit(backMsg.getContent());
-//            backWayDto.setBackWay(tmp2);
-//            log.info("Dto " + backWayDto.getBackWay());
-//            backWayDto.getBackWay().remove(backWayDto.getBackWay().size()-1);
-//            backWayDto.getBackWay().remove(backWayDto.getBackWay().size()-1);
-//            Gson gson = new Gson();
-//            ACLMessage backway1 = new ACLMessage(ACLMessage.PROPOSE);
-//            backway1.addReceiver(new AID(tmp.get(tmp.size()-2), false));
-//            backway1.setContent(gson.toJson(backWayDto));
-//            log.info("Послали "+ backway1 );
-//            getAgent().send(backway1);
+            BackWayDto backWayDto = new BackWayDto();
+            Gson gson = new Gson();
+            WayDto wayDto = gson.fromJson(backMsg.getContent(), WayDto.class);
+            List<String> tmp = wayDto.allAgentsByWay;
+            List<String> tmp2 = wayDto.allAgentsByWay;
+            backWayDto.setWayScircit(String.valueOf(tmp2));
+            backWayDto.setBackWay(tmp2);
+            backWayDto.setWeightOfWay(wayDto.getWieght());
+            ACLMessage backway1 = new ACLMessage(ACLMessage.PROPOSE);
+            backway1.addReceiver(new AID(tmp.get(tmp.size()-2), false));
+            backWayDto.getBackWay().remove(backWayDto.getBackWay().size()-1);
+            backWayDto.getBackWay().remove(backWayDto.getBackWay().size()-1);
+            backway1.setContent(gson.toJson(backWayDto));
+            log.info("Послали "+ backway1 );
+            getAgent().send(backway1);
         }
         if (backMsg1!=null) {
             log.info("Проходим дальше " + backMsg1.getContent());
-//            Gson gson = new Gson();
-//            BackWayDto backWayDto = gson.fromJson(backMsg1.getContent(), BackWayDto.class);
-//            backWayDto.getBackWay().remove(backWayDto.getBackWay().size()-1);
-//            ACLMessage backway1 = new ACLMessage(ACLMessage.PROPOSE);
-//            backway1.addReceiver(new AID(backWayDto.getBackWay().get(backWayDto.getBackWay().size()-1), false));
-//            backway1.setContent(gson.toJson(backWayDto));
-//            log.info("На следующую итерацию "+ backway1 );
-//            if (backWayDto.getBackWay().size() > 1) {
-//                getAgent().send(backway1);
-//            } else {
-//                ACLMessage toInitiateMsg = new ACLMessage(ACLMessage.REQUEST);
-//            }
+            Gson gson = new Gson();
+            BackWayDto backWayDto = gson.fromJson(backMsg1.getContent(), BackWayDto.class);
+            backWayDto.getBackWay().remove(backWayDto.getBackWay().size()-1);
+            ACLMessage backway1 = new ACLMessage(ACLMessage.PROPOSE);
+            backway1.addReceiver(new AID(backWayDto.getBackWay().get(backWayDto.getBackWay().size()-1), false));
+            backway1.setContent(gson.toJson(backWayDto));
+            log.info("На следующую итерацию "+ backway1 );
+            if (backWayDto.getBackWay().size() > 1) {
+                getAgent().send(backway1);
+            } else {
+                ACLMessage toInitiateMsg = new ACLMessage(ACLMessage.REQUEST);
+                toInitiateMsg.addReceiver(new AID(backWayDto.getBackWay().get(0), false));
+                toInitiateMsg.setContent(gson.toJson(backWayDto));
+                log.info("Пересылка к инициатору " + toInitiateMsg);
+                getAgent().send(toInitiateMsg);
+            }
         }
 
     }

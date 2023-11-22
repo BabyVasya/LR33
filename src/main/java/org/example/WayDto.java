@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class WayDto {
+    private boolean tupik = false;
     private String initiator;
     private double wieght;
     private String findingAgent;
@@ -14,6 +15,14 @@ public class WayDto {
 
     public void setAnyCfg(CfgClass anyCfg) {
         this.anyCfg = anyCfg;
+    }
+
+    public boolean isTupik() {
+        return tupik;
+    }
+
+    public void setTupik(boolean tupik) {
+        this.tupik = tupik;
     }
 
     public CfgClass getInitiatorCfg() {

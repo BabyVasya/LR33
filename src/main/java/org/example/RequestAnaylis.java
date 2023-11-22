@@ -51,20 +51,16 @@ public class RequestAnaylis<E> extends Behaviour {
         if (myAgent.getLocalName().equals(wayDto.getFindingAgent())) {
             wayDto.getAllAgentsByWay().add(myAgent.getLocalName());
             log.info("Найдена нужная вершина" + gson.toJson(wayDto));
-            counter++;
             ACLMessage backMsg = new ACLMessage(ACLMessage.CONFIRM);
             backMsg.addReceiver(new AID(wayDto.getAllAgentsByWay().get(wayDto.getAllAgentsByWay().size()-1), false));
-            backMsg.setContent(String.valueOf(wayDto.getAllAgentsByWay()) + String.valueOf(wayDto.getWieght()));
+            backMsg.setContent(gson.toJson(wayDto));
             log.info("Отсылка результата " + backMsg);
             getAgent().send(backMsg);
-            if(counter == 10) {
-                endFlag = true;
-            }
 
         }
 
         if (nb.contains(receivedMsg.getSender().getLocalName()) && nb.size() == 1) {
-            log.info("Тупик");
+            tupik(wayDto, gson);
         }
 
         ACLMessage nextAgentTo = new ACLMessage(ACLMessage.INFORM);
@@ -104,7 +100,20 @@ public class RequestAnaylis<E> extends Behaviour {
 
         @Override
         public boolean done () {
-            return endFlag;
+            return false;
+        }
+
+        private void tupik(WayDto wayDto, Gson gson){
+            log.info("Тупик");
+            wayDto.getAllAgentsByWay().add(myAgent.getLocalName());
+            ACLMessage backMsg = new ACLMessage(ACLMessage.REFUSE);
+            backMsg.addReceiver(new AID(wayDto.getInitiator(), false));
+            backMsg.setContent(gson.toJson(wayDto));
+            log.info("Отсылка результата  с тупиком " + backMsg);
+            getAgent().send(backMsg);
+        }
+        private void foundAgent() {
+
         }
 }
 
