@@ -54,7 +54,7 @@ public class RequestAnaylis<E> extends Behaviour {
             counter++;
             ACLMessage backMsg = new ACLMessage(ACLMessage.CONFIRM);
             backMsg.addReceiver(new AID(wayDto.getAllAgentsByWay().get(wayDto.getAllAgentsByWay().size()-1), false));
-            backMsg.setContent(String.valueOf(wayDto.getAllAgentsByWay()));
+            backMsg.setContent(String.valueOf(wayDto.getAllAgentsByWay()) + String.valueOf(wayDto.getWieght()));
             log.info("Отсылка результата " + backMsg);
             getAgent().send(backMsg);
             if(counter == 10) {

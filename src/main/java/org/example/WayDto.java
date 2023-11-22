@@ -11,11 +11,6 @@ public class WayDto {
     private CfgClass initiatorCfg;
     private CfgClass anyCfg;
 
-//    public WayDto(double wieght, String findingAgent, List<String> allAgentsByWay) {
-//        this.wieght = wieght;
-//        this.findingAgent = findingAgent;
-//        this.allAgentsByWay = allAgentsByWay;
-//    }
 
     public void setAnyCfg(CfgClass anyCfg) {
         this.anyCfg = anyCfg;
