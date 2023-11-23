@@ -8,7 +8,7 @@ public class WayDto {
     private String initiator;
     private double wieght;
     private String findingAgent;
-    List<String> allAgentsByWay = new ArrayList<>();
+    private List<String> allAgentsByWay = new ArrayList<>();
     private CfgClass initiatorCfg;
     private CfgClass anyCfg;
     private List<String> senderNeiborhoods = new ArrayList<>();

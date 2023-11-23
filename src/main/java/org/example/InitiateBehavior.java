@@ -50,6 +50,7 @@ public class InitiateBehavior extends FSMBehaviour {
                     wayDto.setFindingAgent(cfg.getTargetAgentId());
                     wayDto.setInitiator(myAgent.getLocalName());
                     wayDto.setInitiatorCfg(cfg);
+                    wayDto.setSenderNeiborhoods(cfg.getNeighborAgents());
                     Gson gson = new Gson();
                     startMsg.setContent(gson.toJson(wayDto));
                     log.info(startMsg.toString());

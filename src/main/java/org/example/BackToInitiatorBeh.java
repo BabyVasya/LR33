@@ -29,8 +29,8 @@ public class BackToInitiatorBeh extends Behaviour {
             BackWayDto backWayDto = new BackWayDto();
             Gson gson = new Gson();
             WayDto wayDto = gson.fromJson(backMsg.getContent(), WayDto.class);
-            List<String> tmp = wayDto.allAgentsByWay;
-            List<String> tmp2 = wayDto.allAgentsByWay;
+            List<String> tmp = wayDto.getAllAgentsByWay();
+            List<String> tmp2 = wayDto.getAllAgentsByWay();
             backWayDto.setWayScircit(String.valueOf(tmp2));
             backWayDto.setBackWay(tmp2);
             backWayDto.setWeightOfWay(wayDto.getWieght());
