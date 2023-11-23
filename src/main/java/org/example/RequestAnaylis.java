@@ -47,14 +47,6 @@ public class RequestAnaylis<E> extends Behaviour {
 
     private void analyse(List<String> nb, List<Integer> nbD) throws JAXBException {
 //        Инициализация конфига, gson, и парсинг пришедшего JSON
-        getNeiborneibors(cfg);
-//        for (int i =0; i <= neiborCfgs.size()-1; i++) {
-//            for (int j =0; j <= neiborCfgsName.size()-1; j++) {
-//                if(neiborCfgsName.get(j).contains(receivedMsg.getSender().getLocalName())) {
-//                    neiborCfgs.remove(i);
-//                }
-//            }
-//        }
         nb = cfg.getNeighborAgents();
         nbD = cfg.getDistancesToNeighbors();
         log.info("Массив nb " + nb + " цепочка от " + receivedMsg.getSender().getLocalName());
@@ -74,7 +66,7 @@ public class RequestAnaylis<E> extends Behaviour {
             tupik(wayDto, gson);
         }
 //        Удаление ненужных агентов для исключения зацикливания
-        List<String> onlyGoodWays = exclusionOfUnnecessary(wayDto, nb);
+        List<String> onlyGoodWays = exclusionOfUnnecessary(wayDto, nb, nbD);
 
 //        Отправка для дальнейшего поиска нужного агента
 
@@ -105,50 +97,44 @@ public class RequestAnaylis<E> extends Behaviour {
             getAgent().send(backMsg);
         }
 
-        private List<String> exclusionOfUnnecessary(WayDto wayDto, List<String> nb) {
+        private List<String> exclusionOfUnnecessary(WayDto wayDto, List<String> nb, List<Integer> nbD) {
             wayDto.getAllAgentsByWay().add(myAgent.getLocalName());
             List<String> tmpNb = new ArrayList<>(nb);
+            List<Integer> tmpNbD = new ArrayList<>(nbD);
 
-//            Возможно удаление, некорректно
-//            tmpNb.removeAll(wayDto.getInitiatorCfg().getNeighborAgents());
-            for (int j=0; j<=tmpNb.size()-1; j++) {
-//                Возможен рефактор, так как удаление уже произошло
-                if(tmpNb.get(j).equals(receivedMsg.getSender().getLocalName())) {
+
+            for (int j = 0; j <= tmpNb.size() - 1; j++) {
+                if (tmpNb.get(j).equals(receivedMsg.getSender().getLocalName())) {
                     tmpNb.remove(j);
+                    tmpNbD.remove(j);
                 }
             }
 
-            for (int j=0; j<=tmpNb.size()-1; j++) {
-                if(wayDto.getAllAgentsByWay().contains(tmpNb.get(j))) {
+            for (int j = 0; j <= tmpNb.size() - 1; j++) {
+                if (wayDto.getAllAgentsByWay().contains(tmpNb.get(j))) {
                     tmpNb.remove(j);
+                    tmpNbD.remove(j);
                 }
             }
-//Возможно этот цикл не нужен, так как есть следующий
-            for (int j=0; j<=tmpNb.size()-1; j++) {
-                if(wayDto.getInitiatorCfg().getNeighborAgents().contains(wayDto.getSenderNeiborhoods().get(j)) ) {
-                    tmpNb.remove(j);
-                }
-            }
-//            for(int i = 0; i<=neiborCfgs.size()-1; i++) {
-//                for (int j=0; j<=neiborCfgs.get(i).getNeighborAgents().size()-1; j++) {
-//                    if(tmpNb.contains(neiborCfgs.get(i).getNeighborAgents().get(j)) &&  !neiborCfgs.get(i).getNeighborAgents().get(j).equals(receivedMsg.getSender().getLocalName())
-//                    && !tmpNb.contains(receivedMsg.getSender().getLocalName())) {
-//                        log.info("Удаляю соседей соседа " + tmpNb + " "+ neiborCfgs.get(i).getNeighborAgents().get(j) + " сосед - " + neiborCfgsName.get(i));
-//                        tmpNb.remove(j);
-//                        log.info("Удалил " + wayDto.getAllAgentsByWay());
-//                    }
-//                }
-//            }
 
-            for (int j=0; j<=tmpNb.size()-1; j++) {
-                for (int i=0; i<=wayDto.getAllAgentsByWay().size()-1; i++) {
-                    if( tmpNb.contains(wayDto.getAllAgentsByWay().get(i))) {
+                for (int j = 0; j <= tmpNb.size() - 1; j++) {
+                    if (wayDto.getInitiatorCfg().getNeighborAgents().contains(wayDto.getSenderNeiborhoods().get(j))) {
                         tmpNb.remove(j);
+                        tmpNbD.remove(j);
                     }
                 }
-            }
-            return  tmpNb;
-    }
+
+                for (int j = 0; j <= tmpNb.size() - 1; j++) {
+                    for (int i = 0; i <= wayDto.getAllAgentsByWay().size() - 1; i++) {
+                        if (tmpNb.contains(wayDto.getAllAgentsByWay().get(i))) {
+                            tmpNb.remove(j);
+                            tmpNbD.remove(j);
+                        }
+                    }
+                }
+
+            return tmpNb;
+        }
 
     private void sendNext(List<String> onlyGoodWays, WayDto wayDto, Gson gson, List<Integer> nbD) {
         ACLMessage nextAgentTo = new ACLMessage(ACLMessage.INFORM);
