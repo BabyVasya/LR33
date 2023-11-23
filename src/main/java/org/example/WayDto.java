@@ -9,8 +9,27 @@ public class WayDto {
     private double wieght;
     private String findingAgent;
     private List<String> allAgentsByWay = new ArrayList<>();
+    private List<Integer> allWieghtByWay = new ArrayList<>();
     private CfgClass initiatorCfg;
     private CfgClass anyCfg;
+
+    public List<Integer> getAllWieghtByWay() {
+        return allWieghtByWay;
+    }
+
+    public void setAllWieghtByWay(List<Integer> allWieghtByWay) {
+        this.allWieghtByWay = allWieghtByWay;
+    }
+    private List<String> myNeibors = new ArrayList<>();
+
+    public List<String> getMyNeibors() {
+        return myNeibors;
+    }
+
+    public void setMyNeibors(List<String> myNeibors) {
+        this.myNeibors = myNeibors;
+    }
+
     private List<String> senderNeiborhoods = new ArrayList<>();
     private List<String> neiborNeibors = new ArrayList<>();
 

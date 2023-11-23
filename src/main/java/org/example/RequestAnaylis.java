@@ -66,11 +66,11 @@ public class RequestAnaylis<E> extends Behaviour {
             tupik(wayDto, gson);
         }
 //        Удаление ненужных агентов для исключения зацикливания
-        List<String> onlyGoodWays = exclusionOfUnnecessary(wayDto, nb, nbD);
+        exclusionOfUnnecessary(wayDto, nb, nbD);
 
 //        Отправка для дальнейшего поиска нужного агента
 
-        sendNext(onlyGoodWays, wayDto, gson, nbD);
+        sendNext(wayDto, gson, nbD);
 
 
     }
@@ -97,7 +97,7 @@ public class RequestAnaylis<E> extends Behaviour {
             getAgent().send(backMsg);
         }
 
-        private List<String> exclusionOfUnnecessary(WayDto wayDto, List<String> nb, List<Integer> nbD) {
+        private void exclusionOfUnnecessary(WayDto wayDto, List<String> nb, List<Integer> nbD) {
             wayDto.getAllAgentsByWay().add(myAgent.getLocalName());
             List<String> tmpNb = new ArrayList<>(nb);
             List<Integer> tmpNbD = new ArrayList<>(nbD);
@@ -132,20 +132,21 @@ public class RequestAnaylis<E> extends Behaviour {
                         }
                     }
                 }
+                wayDto.setAllWieghtByWay(tmpNbD);
+                wayDto.setMyNeibors(tmpNb);
 
-            return tmpNb;
         }
 
-    private void sendNext(List<String> onlyGoodWays, WayDto wayDto, Gson gson, List<Integer> nbD) {
+    private void sendNext(WayDto wayDto, Gson gson, List<Integer> nbD) {
         ACLMessage nextAgentTo = new ACLMessage(ACLMessage.INFORM);
-        for (int i = 0; i <= onlyGoodWays .size() - 1; i++) {
-            nextAgentTo.addReceiver(new AID(onlyGoodWays .get(i), false));
-            double incrementWay = wayDto.getWieght() + nbD.get(i);
+        for (int i = 0; i <= wayDto.getMyNeibors().size() - 1; i++) {
+            nextAgentTo.addReceiver(new AID(wayDto.getMyNeibors().get(i), false));
+            double incrementWay = wayDto.getWieght() + wayDto.getAllWieghtByWay().get(i);
             wayDto.setSenderNeiborhoods(cfg.getNeighborAgents());
             wayDto.setWieght(incrementWay);
             nextAgentTo.setContent(gson.toJson(wayDto));
             getAgent().send(nextAgentTo);
-            log.info(myAgent.getLocalName() + " отослал информацию к " + onlyGoodWays .get(i) + gson.toJson(wayDto) );
+            log.info(myAgent.getLocalName() + " отослал информацию к " + wayDto.getMyNeibors().get(i) + gson.toJson(wayDto) );
             nextAgentTo.clearAllReceiver();
         }
     }
