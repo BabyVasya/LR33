@@ -95,7 +95,7 @@ public class InitiateBehavior extends FSMBehaviour {
                             .reduce((i, j) -> resultWight.get(i) < resultWight.get(j) ? i : j).orElse(-1);
                     log.info("Лучший путь " + resultWight.get(index) + resultCircuit.get(index));
                 }
-                if (resultMsg0 != null) {
+                else if (resultMsg0 != null) {
                     log.info("Инициатор получил сообщение с тупиковым путем " + resultMsg);
                     Gson gson = new Gson();
                     WayDto wayDto = gson.fromJson(resultMsg0.getContent(), WayDto.class);
@@ -110,10 +110,6 @@ public class InitiateBehavior extends FSMBehaviour {
                 return false;
             }
 
-            @Override
-            public int onEnd() {
-                return 0;
-            }
 
 
         }

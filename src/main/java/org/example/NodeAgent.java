@@ -1,10 +1,6 @@
 package org.example;
 
 import jade.core.Agent;
-import jade.domain.DFService;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.domain.FIPAException;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.xml.bind.JAXBContext;
@@ -26,6 +22,7 @@ public class NodeAgent extends Agent {
                     case "Agent1":
                         cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
                                 File("src/main/resources/agent1Cfg.xml"));
+
 
                         break;
                     case "Agent2":
@@ -70,7 +67,11 @@ public class NodeAgent extends Agent {
                         cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
                                 File("src/main/resources/agent11Cfg.xml"));
                         break;
-                }
+                    case "Agent12":
+                        cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
+                                File("src/main/resources/agent12Cfg.xml"));
+                        break;
+                                    }
 
 
             } catch (JAXBException e) {
@@ -80,6 +81,7 @@ public class NodeAgent extends Agent {
         addBehaviour(new InitiateBehavior(cfg));
         addBehaviour(new RequestAnaylis(cfg));
         addBehaviour(new BackToInitiatorBeh(cfg));
+        addBehaviour(new BactoToBeh());
     }
 }
 

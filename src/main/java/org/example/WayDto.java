@@ -11,7 +11,28 @@ public class WayDto {
     List<String> allAgentsByWay = new ArrayList<>();
     private CfgClass initiatorCfg;
     private CfgClass anyCfg;
+    private List<String> senderNeiborhoods = new ArrayList<>();
+    private List<String> neiborNeibors = new ArrayList<>();
 
+    public List<String> getNeiborNeibors() {
+        return neiborNeibors;
+    }
+
+    public void setNeiborNeibors(List<String> neiborNeibors) {
+        this.neiborNeibors = neiborNeibors;
+    }
+
+    public CfgClass getAnyCfg() {
+        return anyCfg;
+    }
+
+    public List<String> getSenderNeiborhoods() {
+        return senderNeiborhoods;
+    }
+
+    public void setSenderNeiborhoods(List<String> senderNeiborhoods) {
+        this.senderNeiborhoods = senderNeiborhoods;
+    }
 
     public void setAnyCfg(CfgClass anyCfg) {
         this.anyCfg = anyCfg;

@@ -3,7 +3,14 @@
 <cfg>
     <initiator>false</initiator>
     <neighborAgents>Agent4</neighborAgents>
-    <neighborAgents>Agent10</neighborAgents>
+    <neighborAgents>Agent5</neighborAgents>
+    <neighborAgents>Agent7</neighborAgents>
+    <neighborAgents>Agent8</neighborAgents>
+    <neighborAgents>Agent9</neighborAgents>
+
     <distancesToNeighbors>20</distancesToNeighbors>
+    <distancesToNeighbors>3</distancesToNeighbors>
+    <distancesToNeighbors>5</distancesToNeighbors>
+    <distancesToNeighbors>12</distancesToNeighbors>
     <distancesToNeighbors>1</distancesToNeighbors>
 </cfg>
