@@ -25,21 +25,8 @@ public class BackToInitiatorBeh extends Behaviour {
     public void action() {
         ACLMessage backMsg = getAgent().receive(MessageTemplate.MatchPerformative(ACLMessage.CONFIRM));
         if (backMsg!=null ) {
-            log.info("Получил запрос на обратный путь " + backMsg.getContent());
-            BackWayDto backWayDto = new BackWayDto();
-            Gson gson = new Gson();
-            WayDto wayDto = gson.fromJson(backMsg.getContent(), WayDto.class);
-            List<String> tmp = wayDto.getAllAgentsByWay();
-            List<String> tmp2 = wayDto.getAllAgentsByWay();
-            backWayDto.setWayScircit(String.valueOf(tmp2));
-            backWayDto.setBackWay(tmp2);
-            backWayDto.setWeightOfWay(wayDto.getWieght());
-            ACLMessage backway1 = new ACLMessage(ACLMessage.PROPOSE);
-            backway1.addReceiver(new AID(tmp.get(tmp.size()-2), false));
-            backWayDto.getBackWay().remove(backWayDto.getBackWay().size()-1);
-            backWayDto.getBackWay().remove(backWayDto.getBackWay().size()-1);
-            backway1.setContent(gson.toJson(backWayDto));
-            getAgent().send(backway1);
+//            Отправка сообщения иницатором обратного пути в дальнейшую цепочку обратного пути
+            sendInitiateToStartBackWay(backMsg);
         } else {
             block();
         }
@@ -49,5 +36,22 @@ public class BackToInitiatorBeh extends Behaviour {
     @Override
     public boolean done() {
         return false;
+    }
+    private void sendInitiateToStartBackWay(ACLMessage backMsg) {
+        log.info("Получил запрос на обратный путь " + backMsg.getContent());
+        BackWayDto backWayDto = new BackWayDto();
+        Gson gson = new Gson();
+        WayDto wayDto = gson.fromJson(backMsg.getContent(), WayDto.class);
+        List<String> tmp = wayDto.getAllAgentsByWay();
+        List<String> tmp2 = wayDto.getAllAgentsByWay();
+        backWayDto.setWayScircit(String.valueOf(tmp2));
+        backWayDto.setBackWay(tmp2);
+        backWayDto.setWeightOfWay(wayDto.getWieght());
+        ACLMessage backway1 = new ACLMessage(ACLMessage.PROPOSE);
+        backway1.addReceiver(new AID(tmp.get(tmp.size()-2), false));
+        backWayDto.getBackWay().remove(backWayDto.getBackWay().size()-1);
+        backWayDto.getBackWay().remove(backWayDto.getBackWay().size()-1);
+        backway1.setContent(gson.toJson(backWayDto));
+        getAgent().send(backway1);
     }
 }

@@ -40,6 +40,11 @@ public class InitiateBehavior extends FSMBehaviour {
 
         @Override
         public void action() {
+//           Настройка json и передача иницаитором сообщения своим соседям
+            initiateFindingWays();
+        }
+
+        private void initiateFindingWays() {
             if (this.cfg.getInitiator() == true) {
                 ACLMessage startMsg = new ACLMessage(ACLMessage.INFORM);
                 for (int i = 0; i <= cfg.getNeighborAgents().size() - 1; i++) {
