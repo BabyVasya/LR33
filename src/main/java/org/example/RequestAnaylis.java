@@ -39,22 +39,24 @@ public class RequestAnaylis<E> extends Behaviour {
                 analyse(nb, nbD);
             } catch (JAXBException e) {
                 throw new RuntimeException(e);
+            } catch (CloneNotSupportedException e) {
+                throw new RuntimeException(e);
             }
         } else {
             block();
         }
     }
 
-    private void analyse(List<String> nb, List<Integer> nbD) throws JAXBException {
+    private void analyse(List<String> nb, List<Integer> nbD) throws JAXBException, CloneNotSupportedException {
 //        Инициализация конфига, gson, и парсинг пришедшего JSON
         nb = cfg.getNeighborAgents();
         nbD = cfg.getDistancesToNeighbors();
-        log.info("Массив nb " + nb + " цепочка от " + receivedMsg.getSender().getLocalName());
-        log.info("Массив nbD " + nbD+ " цепочка от " + receivedMsg.getSender().getLocalName());
+
         Gson gson = new Gson();
         WayDto wayDto = gson.fromJson(receivedMsg.getContent(), WayDto.class);
 
-        nb.remove(wayDto.getInitiator());
+        log.info("Массив nb " + nb + " цепочка от " + receivedMsg.getSender().getLocalName());
+        log.info("Массив nbD " + nbD+ " цепочка от " + receivedMsg.getSender().getLocalName());
         log.info("Новая интерация с поиском " + wayDto.getFindingAgent() + " информация на текущей интерации " + gson.toJson(wayDto) + " цепочка идет от " + receivedMsg.getSender().getLocalName());
 //        Проверка на найденного агента
         if (myAgent.getLocalName().equals(wayDto.getFindingAgent())) {
@@ -101,52 +103,54 @@ public class RequestAnaylis<E> extends Behaviour {
             wayDto.getAllAgentsByWay().add(myAgent.getLocalName());
             List<String> tmpNb = new ArrayList<>(nb);
             List<Integer> tmpNbD = new ArrayList<>(nbD);
-
-
+            log.info("До циклов " + " куда можно отправить " +tmpNb +  " путь "+wayDto.getAllAgentsByWay() + " соседи отправителя "+ wayDto.getSenderNeiborhoods());
+            log.info("До циклов " + " куда можно отправить " +tmpNbD);
+//                Нельзя идти назад
             for (int j = 0; j <= tmpNb.size() - 1; j++) {
-                if (tmpNb.get(j).equals(receivedMsg.getSender().getLocalName())) {
-                    tmpNb.remove(j);
-                    tmpNbD.remove(j);
-                }
-            }
-
-            for (int j = 0; j <= tmpNb.size() - 1; j++) {
-                if (wayDto.getAllAgentsByWay().contains(tmpNb.get(j))) {
-                    tmpNb.remove(j);
-                    tmpNbD.remove(j);
-                }
-            }
-
-                for (int j = 0; j <= tmpNb.size() - 1; j++) {
-                    if (wayDto.getInitiatorCfg().getNeighborAgents().contains(wayDto.getSenderNeiborhoods().get(j))) {
-                        tmpNb.remove(j);
-                        tmpNbD.remove(j);
-                    }
-                }
-
-                for (int j = 0; j <= tmpNb.size() - 1; j++) {
                     for (int i = 0; i <= wayDto.getAllAgentsByWay().size() - 1; i++) {
                         if (tmpNb.contains(wayDto.getAllAgentsByWay().get(i))) {
-                            tmpNb.remove(j);
-                            tmpNbD.remove(j);
+                            log.info("Индекс удаляемого " + tmpNb.indexOf(wayDto.getAllAgentsByWay().get(i)) + wayDto.getAllAgentsByWay().get(i)+tmpNb.contains(wayDto.getAllAgentsByWay().get(i)));
+                            tmpNbD.remove(tmpNb.indexOf(wayDto.getAllAgentsByWay().get(i)));
+                            tmpNb.remove(wayDto.getAllAgentsByWay().get(i));
+
                         }
                     }
+            }
+//           Исключение соседей отправителя
+            for (int j = 0; j <= tmpNb.size() - 1; j++){
+                for (int i = 0; i <= wayDto.getSenderNeiborhoods().size() - 1; i++) {
+                    if (tmpNb.contains(wayDto.getSenderNeiborhoods().get(i))) {
+                        log.info("Индекс удаляемого " + tmpNb.indexOf(wayDto.getSenderNeiborhoods().get(i)) + wayDto.getSenderNeiborhoods().get(i) + tmpNb.contains(wayDto.getSenderNeiborhoods().get(i)));
+                        tmpNbD.remove(tmpNb.indexOf(wayDto.getSenderNeiborhoods().get(i)));
+                        tmpNb.remove(wayDto.getSenderNeiborhoods().get(i));
+
+                    }
                 }
-                wayDto.setAllWieghtByWay(tmpNbD);
-                wayDto.setMyNeibors(tmpNb);
+            }
+            wayDto.setGoodWaysWeight(tmpNbD);
+            wayDto.setMyNeibors(tmpNb);
+            log.info("После цикла " + wayDto.getMyNeibors()+ wayDto.getGoodWaysWeight() );
+
+
+
 
         }
 
-    private void sendNext(WayDto wayDto, Gson gson, List<Integer> nbD) {
+    private void sendNext(WayDto wayDto, Gson gson, List<Integer> nbD) throws CloneNotSupportedException {
         ACLMessage nextAgentTo = new ACLMessage(ACLMessage.INFORM);
         for (int i = 0; i <= wayDto.getMyNeibors().size() - 1; i++) {
-            nextAgentTo.addReceiver(new AID(wayDto.getMyNeibors().get(i), false));
-            double incrementWay = wayDto.getWieght() + wayDto.getAllWieghtByWay().get(i);
-            wayDto.setSenderNeiborhoods(cfg.getNeighborAgents());
-            wayDto.setWieght(incrementWay);
-            nextAgentTo.setContent(gson.toJson(wayDto));
+            WayDto wayDtoCopy = (WayDto) wayDto.clone();
+            nextAgentTo.addReceiver(new AID(wayDtoCopy.getMyNeibors().get(i), false));
+            wayDtoCopy.setSenderNeiborhoods(cfg.getNeighborAgents());
+            wayDtoCopy.getAllWieghtByWay().add(wayDtoCopy.getGoodWaysWeight().get(i));
+            log.info("Increment " + wayDtoCopy.getWieght() + "идем к " +wayDtoCopy.getMyNeibors().get(i) +" цепочка от  " +wayDtoCopy.getAllAgentsByWay() + " "+ wayDtoCopy.getGoodWaysWeight().get(i));
+            double incrementWay = wayDtoCopy.getWieght() + wayDtoCopy.getGoodWaysWeight().get(i);
+            wayDtoCopy.setWieght(incrementWay);
+            log.info("Increment after" + wayDtoCopy.getWieght()+ "идем к " +wayDtoCopy.getMyNeibors().get(i)  +" цепочка от  " +wayDtoCopy.getAllAgentsByWay() + " "+ wayDtoCopy.getGoodWaysWeight().get(i));
+            nextAgentTo.setContent(gson.toJson(wayDtoCopy));
             getAgent().send(nextAgentTo);
-            log.info(myAgent.getLocalName() + " отослал информацию к " + wayDto.getMyNeibors().get(i) + gson.toJson(wayDto) );
+            incrementWay = incrementWay - wayDtoCopy.getGoodWaysWeight().get(i);
+            log.info(myAgent.getLocalName() + " отослал информацию к " + wayDtoCopy.getMyNeibors().get(i) + gson.toJson(wayDtoCopy) );
             nextAgentTo.clearAllReceiver();
         }
     }

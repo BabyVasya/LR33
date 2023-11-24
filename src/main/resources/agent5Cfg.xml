@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
 <cfg>
-    <initiator>true</initiator>
+    <initiator>false</initiator>
     <neighborAgents>Agent1</neighborAgents>
     <neighborAgents>Agent2</neighborAgents>
     <neighborAgents>Agent3</neighborAgents>
@@ -18,5 +18,4 @@
     <distancesToNeighbors>10</distancesToNeighbors>
     <distancesToNeighbors>21</distancesToNeighbors>
 
-    <targetAgentId>Agent10</targetAgentId>
 </cfg>

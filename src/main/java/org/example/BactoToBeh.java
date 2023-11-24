@@ -13,16 +13,17 @@ public class BactoToBeh extends Behaviour {
     public void action() {
         ACLMessage backMsg1 = getAgent().receive(MessageTemplate.MatchPerformative(ACLMessage.PROPOSE));
         if (backMsg1!=null) {
-            log.info("Обратный путь");
+            log.info("Обратный путь" + backMsg1);
             Gson gson = new Gson();
             BackWayDto backWayDto = gson.fromJson(backMsg1.getContent(), BackWayDto.class);
-            backWayDto.getBackWay().remove(backWayDto.getBackWay().size() - 1);
-            ACLMessage backway1 = new ACLMessage(ACLMessage.PROPOSE);
-            backway1.addReceiver(new AID(backWayDto.getBackWay().get(backWayDto.getBackWay().size() - 1), false));
-            backway1.setContent(gson.toJson(backWayDto));
             if (backWayDto.getBackWay().size() > 1) {
+                backWayDto.getBackWay().remove(backWayDto.getBackWay().size() - 1);
+                ACLMessage backway1 = new ACLMessage(ACLMessage.PROPOSE);
+                backway1.addReceiver(new AID(backWayDto.getBackWay().get(backWayDto.getBackWay().size() - 1), false));
+                backway1.setContent(gson.toJson(backWayDto));
                 getAgent().send(backway1);
-            } else {
+            }
+             else {
                 ACLMessage toInitiateMsg = new ACLMessage(ACLMessage.REQUEST);
                 toInitiateMsg.addReceiver(new AID(backWayDto.getBackWay().get(0), false));
                 toInitiateMsg.setContent(gson.toJson(backWayDto));

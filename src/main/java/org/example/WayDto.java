@@ -3,7 +3,12 @@ package org.example;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WayDto {
+public class WayDto implements Cloneable {
+    @Override
+    protected Object clone() throws CloneNotSupportedException {
+        return super.clone();
+    }
+
     private boolean tupik = false;
     private String initiator;
     private double wieght;
@@ -32,9 +37,17 @@ public class WayDto {
 
     private List<String> senderNeiborhoods = new ArrayList<>();
     private List<String> neiborNeibors = new ArrayList<>();
-
+    private List<Integer> goodWaysWeight = new ArrayList<>();
     public List<String> getNeiborNeibors() {
         return neiborNeibors;
+    }
+
+    public List<Integer> getGoodWaysWeight() {
+        return goodWaysWeight;
+    }
+
+    public void setGoodWaysWeight(List<Integer> goodWaysWeight) {
+        this.goodWaysWeight = goodWaysWeight;
     }
 
     public void setNeiborNeibors(List<String> neiborNeibors) {
