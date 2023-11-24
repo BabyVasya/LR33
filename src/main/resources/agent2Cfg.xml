@@ -5,7 +5,12 @@
     <neighborAgents>Agent1</neighborAgents>
     <neighborAgents>Agent3</neighborAgents>
     <neighborAgents>Agent4</neighborAgents>
-    <distancesToNeighbors>2</distancesToNeighbors>
+    <neighborAgents>Agent5</neighborAgents>
     <distancesToNeighbors>4</distancesToNeighbors>
-    <distancesToNeighbors>7</distancesToNeighbors>
+    <distancesToNeighbors>20</distancesToNeighbors>
+    <distancesToNeighbors>19</distancesToNeighbors>
+    <distancesToNeighbors>12</distancesToNeighbors>
+
+
+
 </cfg>

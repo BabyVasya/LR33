@@ -1,10 +1,6 @@
 package org.example;
 
 import jade.core.Agent;
-import jade.domain.DFService;
-import jade.domain.FIPAAgentManagement.DFAgentDescription;
-import jade.domain.FIPAAgentManagement.ServiceDescription;
-import jade.domain.FIPAException;
 import lombok.extern.slf4j.Slf4j;
 
 import javax.xml.bind.JAXBContext;
@@ -26,39 +22,56 @@ public class NodeAgent extends Agent {
                     case "Agent1":
                         cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
                                 File("src/main/resources/agent1Cfg.xml"));
-                        log.info(String.valueOf(cfg.getInitiator()));
-                        log.info(String.valueOf(cfg.getDistancesToNeighbors()));
-                        log.info(String.valueOf(cfg.getNeighborAgents()));
+
+
                         break;
                     case "Agent2":
                         cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
                                 File("src/main/resources/agent2Cfg.xml"));
-                        log.info(String.valueOf(cfg.getInitiator()));
-                        log.info(String.valueOf(cfg.getDistancesToNeighbors()));
-                        log.info(String.valueOf(cfg.getNeighborAgents()));
+
                         break;
                     case "Agent3":
                         cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
                                 File("src/main/resources/agent3Cfg.xml"));
-                        log.info(String.valueOf(cfg.getInitiator()));
-                        log.info(String.valueOf(cfg.getDistancesToNeighbors()));
-                        log.info(String.valueOf(cfg.getNeighborAgents()));
+
                         break;
                     case "Agent4":
                         cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
                                 File("src/main/resources/agent4Cfg.xml"));
-                        log.info(String.valueOf(cfg.getInitiator()));
-                        log.info(String.valueOf(cfg.getDistancesToNeighbors()));
-                        log.info(String.valueOf(cfg.getNeighborAgents()));
                         break;
                     case "Agent5":
                         cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
                                 File("src/main/resources/agent5Cfg.xml"));
-                        log.info(String.valueOf(cfg.getInitiator()));
-                        log.info(String.valueOf(cfg.getDistancesToNeighbors()));
-                        log.info(String.valueOf(cfg.getNeighborAgents()));
                         break;
-                }
+                    case "Agent6":
+                        cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
+                                File("src/main/resources/agent6Cfg.xml"));
+                        break;
+                    case "Agent7":
+                        cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
+                                File("src/main/resources/agent7Cfg.xml"));
+                        break;
+                    case "Agent8":
+                        cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
+                                File("src/main/resources/agent8Cfg.xml"));
+                        break;
+                    case "Agent9":
+                        cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
+                                File("src/main/resources/agent9Cfg.xml"));
+                        break;
+                    case "Agent10":
+                        cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
+                                File("src/main/resources/agent10Cfg.xml"));
+                        break;
+                    case "Agent11":
+                        cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
+                                File("src/main/resources/agent11Cfg.xml"));
+                        break;
+                    case "Agent12":
+                        cfg = (CfgClass) jaxbUnmarshaller.unmarshal(new
+                                File("src/main/resources/agent12Cfg.xml"));
+                        break;
+                                    }
 
 
             } catch (JAXBException e) {
@@ -67,6 +80,8 @@ public class NodeAgent extends Agent {
         }
         addBehaviour(new InitiateBehavior(cfg));
         addBehaviour(new RequestAnaylis(cfg));
+        addBehaviour(new BackToInitiatorBeh(cfg));
+        addBehaviour(new BactoToBeh());
     }
 }
 
